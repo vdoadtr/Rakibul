@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ececec; scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ececec; scroll-behavior: smooth; overflow-x: hidden; }
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(15px);
@@ -27,7 +27,34 @@
         }
         .accent-green { color: #5ee765; }
         .bg-accent-green { background-color: #5ee765; }
-        iframe { border-radius: 16px; }
+        
+        /* Modal Styles */
+        #video-modal { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal-content { width: 90%; max-width: 450px; aspect-ratio: 9/16; position: relative; }
+        
+        .unmute-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 8px;
+            border-radius: 50%;
+            z-index: 10;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: 0.3s;
+        }
+        .unmute-btn:hover { background: #5ee765; color: black; }
+        
+        .video-overlay {
+            position: absolute;
+            inset: 0;
+            cursor: pointer;
+            z-index: 5;
+            background: transparent;
+        }
+        
         .skill-tag {
             background: rgba(255, 255, 255, 0.05);
             padding: 4px 12px;
@@ -38,6 +65,14 @@
     </style>
 </head>
 <body>
+
+    <!-- Video Modal -->
+    <div id="video-modal" onclick="closeModal()">
+        <button class="absolute top-10 right-10 text-white text-4xl hover:text-[#5ee765] z-[110]">&times;</button>
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <iframe id="modal-iframe" class="w-full h-full rounded-3xl" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+    </div>
 
     <!-- Navigation -->
     <nav class="fixed top-0 w-full z-50 p-4">
@@ -79,6 +114,39 @@
         </div>
     </section>
 
+    <!-- Why Work With Me Section -->
+    <section class="py-20 px-4">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold mb-12 text-center uppercase tracking-tighter">Why Work <span class="accent-green">With Me?</span></h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-card p-8 hover:bg-white/5 transition-colors">
+                    <h4 class="accent-green font-bold mb-3 italic underline">Scroll-Stopping Visuals</h4>
+                    <p class="text-sm text-gray-400">In a world of endless scrolling, I create videos designed to break the pattern. I focus on high-impact visuals that capture attention and force potential customers to stop and watch.</p>
+                </div>
+                <div class="glass-card p-8 hover:bg-white/5 transition-colors">
+                    <h4 class="accent-green font-bold mb-3 italic underline">Mastering the First 3 Seconds</h4>
+                    <p class="text-sm text-gray-400">The first 3 seconds decide the success of an ad. By using custom 3D elements and dynamic motion, I hook your audience instantly, ensuring they stay engaged until the very end.</p>
+                </div>
+                <div class="glass-card p-8 hover:bg-white/5 transition-colors">
+                    <h4 class="accent-green font-bold mb-3 italic underline">Crystal Clear Messaging</h4>
+                    <p class="text-sm text-gray-400">I believe every frame should speak. My editing ensures that your message is delivered clearly and effectively at every second. No confusion, no clutter—just a seamless flow.</p>
+                </div>
+                <div class="glass-card p-8 hover:bg-white/5 transition-colors">
+                    <h4 class="accent-green font-bold mb-3 italic underline">100% Custom Animation</h4>
+                    <p class="text-sm text-gray-400">I don’t rely on generic, overused templates. Every animation is custom-built to sync perfectly with your specific content, giving your video a unique identity.</p>
+                </div>
+                <div class="glass-card p-8 hover:bg-white/5 transition-colors">
+                    <h4 class="accent-green font-bold mb-3 italic underline">Psychological Color & Depth</h4>
+                    <p class="text-sm text-gray-400">Colors evoke emotions. I use advanced color grading and cinematic depth to create a premium feel, building an instant sense of authority for your brand.</p>
+                </div>
+                <div class="glass-card p-8 hover:bg-white/5 transition-colors">
+                    <h4 class="accent-green font-bold mb-3 italic underline">Immersive Sound Design</h4>
+                    <p class="text-sm text-gray-400">A professional video is incomplete without immersive audio. I carefully layer sound effects (SFX) and background scores to make the experience feel alive.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Portfolio Section -->
     <section id="portfolio" class="py-20 px-4 bg-[#0f0f0f]">
         <div class="max-w-6xl mx-auto">
@@ -86,10 +154,7 @@
                 <h2 class="text-4xl font-bold mb-2 uppercase tracking-tighter">Portfolio</h2>
                 <div class="h-1 w-20 bg-accent-green"></div>
             </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="video-grid">
-                <!-- Videos will be injected here via script -->
-            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="video-grid"></div>
         </div>
     </section>
 
@@ -101,51 +166,38 @@
                 My expertise spans various areas including crafting compelling short films, creating dynamic motion graphics, and mastering sound design and color grading to bring projects to life. 
             </p>
             <p class="text-gray-400 leading-relaxed mb-6">
-                I possess a deep understanding of camera fundamentals such as exposure, shutter speed, ISO, focal length, and various shot angles, allowing me to approach every project with a comprehensive creative vision.
+                I possess a deep understanding of camera fundamentals such as exposure, shutter speed, ISO, focal length, and various shot angles.
             </p>
             <div class="grid grid-cols-2 gap-4 mt-8">
                 <div class="p-4 rounded-2xl bg-white/5 border border-white/10 text-center">
                     <h4 class="accent-green font-bold text-xl tracking-tighter uppercase">AI Expert</h4>
-                    <p class="text-[10px] uppercase text-gray-500">Visual Idea Generation</p>
+                    <p class="text-[10px] uppercase text-gray-500">Visual Workflow</p>
                 </div>
                 <div class="p-4 rounded-2xl bg-white/5 border border-white/10 text-center">
                     <h4 class="accent-green font-bold text-xl tracking-tighter uppercase">Scripting</h4>
-                    <p class="text-[10px] uppercase text-gray-500">After Effects Expressions</p>
+                    <p class="text-[10px] uppercase text-gray-500">AE Expressions</p>
                 </div>
             </div>
         </div>
 
         <div class="glass-card p-10 flex flex-col justify-between">
             <div>
-                <h3 class="text-2xl font-bold accent-green mb-6 uppercase tracking-widest">Technical Skills</h3>
-                <div class="space-y-6">
-                    <div>
-                        <p class="text-xs uppercase text-gray-500 font-bold mb-2">Video & Motion</p>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="skill-tag">Premiere Pro</span>
-                            <span class="skill-tag">After Effects</span>
-                            <span class="skill-tag">Motion Graphics</span>
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-xs uppercase text-gray-500 font-bold mb-2">Graphics & Design</p>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="skill-tag">Photoshop</span>
-                            <span class="skill-tag">Pixelmator Pro</span>
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-xs uppercase text-gray-500 font-bold mb-2">Sound Design</p>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="skill-tag">Adobe Audition</span>
-                            <span class="skill-tag">Premiere Sound</span>
-                        </div>
-                    </div>
+                <h3 class="text-2xl font-bold accent-green mb-6 uppercase tracking-widest">Technical Arsenal</h3>
+                <div class="flex flex-wrap gap-2">
+                    <span class="skill-tag">Premiere Pro</span>
+                    <span class="skill-tag">After Effects</span>
+                    <span class="skill-tag">Photoshop</span>
+                    <span class="skill-tag">Pixelmator Pro</span>
+                    <span class="skill-tag">Adobe Audition</span>
+                    <span class="skill-tag">Color Grading</span>
+                    <span class="skill-tag">Sound Design</span>
+                    <span class="skill-tag">Motion Graphics</span>
+                    <span class="skill-tag">AI Content Gen</span>
                 </div>
             </div>
             <div class="mt-8 pt-6 border-t border-white/10">
-                <p class="text-sm text-gray-400 italic font-light leading-relaxed">
-                    "Every problem solved with AI. Expression code, script creation for After Effects helps my workflow drastically."
+                <p class="text-sm text-gray-400 italic font-light">
+                    "Every problem solved with AI. Expression code and scripts for After Effects drastically help my workflow."
                 </p>
             </div>
         </div>
@@ -156,49 +208,37 @@
         <div class="max-w-6xl mx-auto">
             <h2 class="text-4xl font-bold mb-12 uppercase tracking-tighter">Work Experience</h2>
             <div class="space-y-6">
-                <!-- Globyad -->
                 <div class="glass-card p-8 flex flex-col md:flex-row justify-between items-start">
                     <div class="mb-4 md:mb-0">
                         <span class="accent-green text-xs font-bold uppercase tracking-widest">Jan 20, 2026 – Present</span>
                         <h3 class="text-xl font-bold text-white">Globyad Agency</h3>
                         <p class="text-gray-500 font-medium">Video Editor</p>
                     </div>
-                    <div class="md:max-w-md text-gray-400 text-sm leading-relaxed">
-                        Creating high-converting promotional videos and managing social media ad creatives. Utilizing tools like After Effects and Pixelmator Pro for modern visual layouts.
-                    </div>
+                    <div class="md:max-w-md text-gray-400 text-sm leading-relaxed">Promotional videos and social media ad creatives.</div>
                 </div>
-                <!-- Our Voice -->
                 <div class="glass-card p-8 flex flex-col md:flex-row justify-between items-start">
                     <div class="mb-4 md:mb-0">
                         <span class="accent-green text-xs font-bold uppercase tracking-widest">April 2025 – Dec 2025</span>
                         <h3 class="text-xl font-bold text-white">Our Voice</h3>
                         <p class="text-gray-500 font-medium">Video Editor</p>
                     </div>
-                    <div class="md:max-w-md text-gray-400 text-sm leading-relaxed">
-                        Managed internal and external video content creation and post-production workflows.
-                    </div>
+                    <div class="md:max-w-md text-gray-400 text-sm leading-relaxed">Internal/External content workflows and post-production.</div>
                 </div>
-                <!-- Tara News -->
                 <div class="glass-card p-8 flex flex-col md:flex-row justify-between items-start">
                     <div class="mb-4 md:mb-0">
                         <span class="accent-green text-xs font-bold uppercase tracking-widest">June 2024 – Nov 2024</span>
                         <h3 class="text-xl font-bold text-white">TARA NEWS</h3>
                         <p class="text-gray-500 font-medium">Video Editor</p>
                     </div>
-                    <div class="md:max-w-md text-gray-400 text-sm leading-relaxed">
-                        Handled daily news editing and broadcast-ready video formatting.
-                    </div>
+                    <div class="md:max-w-md text-gray-400 text-sm leading-relaxed">News editing and broadcast-ready formatting.</div>
                 </div>
-                <!-- TDN Bangla -->
                 <div class="glass-card p-8 flex flex-col md:flex-row justify-between items-start">
                     <div class="mb-4 md:mb-0">
                         <span class="accent-green text-xs font-bold uppercase tracking-widest">Nov 2022 – April 2024</span>
                         <h3 class="text-xl font-bold text-white">TDN Bangla</h3>
                         <p class="text-gray-500 font-medium">Video Editor</p>
                     </div>
-                    <div class="md:max-w-md text-gray-400 text-sm leading-relaxed">
-                        Edited news reports, interviews, and documentary-style videos.
-                    </div>
+                    <div class="md:max-w-md text-gray-400 text-sm leading-relaxed">News reports, interviews, and documentaries.</div>
                 </div>
             </div>
         </div>
@@ -211,17 +251,17 @@
             <div class="glass-card p-8 border-l-4 border-l-[#5ee765]">
                 <h4 class="text-white font-bold text-lg mb-1">M.A. in Mass Communication</h4>
                 <p class="accent-green text-sm mb-4 uppercase font-bold tracking-widest">2025 - Present</p>
-                <p class="text-gray-500 text-sm">Harichand Guruchand University</p>
+                <p class="text-gray-500 text-sm font-bold">Harichand Guruchand University</p>
             </div>
             <div class="glass-card p-8 border-l-4 border-l-[#5ee765]">
                 <h4 class="text-white font-bold text-lg mb-1">B.Voc in Broadcast Journalism</h4>
                 <p class="accent-green text-sm mb-4 uppercase font-bold tracking-widest">2022 - 2025</p>
-                <p class="text-gray-500 text-sm">Derozio Memorial College</p>
+                <p class="text-gray-500 text-sm font-bold">Derozio Memorial College</p>
             </div>
         </div>
     </section>
 
-    <!-- Contact & Personal Details -->
+    <!-- Contact & Details Section -->
     <section id="contact" class="py-20 px-4 bg-[#0a0a0a]">
         <div class="max-w-6xl mx-auto glass-card p-12 relative overflow-hidden">
             <div class="grid md:grid-cols-2 gap-12 relative z-10">
@@ -229,37 +269,36 @@
                     <h2 class="text-4xl font-bold mb-8 uppercase tracking-tighter accent-green">Get In Touch</h2>
                     <div class="space-y-8">
                         <div>
-                            <p class="text-[10px] uppercase text-gray-500 font-bold mb-1 tracking-[4px]">Phone</p>
-                            <a href="tel:9531661985" class="text-2xl font-light hover:text-[#5ee765] transition-colors">9531661985</a>
+                            <p class="text-[10px] uppercase text-gray-500 font-bold mb-1 tracking-[4px]">Phone Number</p>
+                            <a href="tel:9531661985" class="text-2xl font-light hover:text-[#5ee765] transition-colors">+91 9531661985</a>
                         </div>
                         <div>
-                            <p class="text-[10px] uppercase text-gray-500 font-bold mb-1 tracking-[4px]">Email</p>
+                            <p class="text-[10px] uppercase text-gray-500 font-bold mb-1 tracking-[4px]">Email Address</p>
                             <a href="mailto:vdoadtr@gmail.com" class="text-2xl font-light hover:text-[#5ee765] transition-colors">vdoadtr@gmail.com</a>
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-col justify-end">
-                    <div class="space-y-8">
-                        <div>
-                            <p class="text-[10px] uppercase text-gray-500 font-bold mb-1 tracking-[4px]">Current Address</p>
-                            <p class="text-lg text-gray-300">Rajarhat New Town, Kolkata 700135, West Bengal</p>
-                        </div>
-                        <div>
-                            <p class="text-[10px] uppercase text-gray-500 font-bold mb-1 tracking-[4px]">Home Town</p>
-                            <p class="text-lg text-gray-300">Panditpur, Natidanga, Nadia 741152, West Bengal</p>
-                        </div>
+                <div class="space-y-8">
+                    <div>
+                        <p class="text-[10px] uppercase text-gray-500 font-bold mb-1 tracking-[4px]">Current Address</p>
+                        <p class="text-lg text-gray-300">Rajarhat New Town, Kolkata 700135, WB</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] uppercase text-gray-500 font-bold mb-1 tracking-[4px]">Home Town Address</p>
+                        <p class="text-lg text-gray-300">Panditpur, Natidanga, Nadia 741152, WB</p>
                     </div>
                 </div>
             </div>
-            <div class="absolute -bottom-10 -right-10 opacity-5 text-[15rem] font-bold select-none pointer-events-none">VDO</div>
+            <div class="absolute -bottom-10 -right-10 opacity-5 text-[15rem] font-bold select-none pointer-events-none">PRO</div>
         </div>
     </section>
 
     <footer class="py-12 text-center text-gray-600 text-[10px] uppercase tracking-[5px]">
-        RAKIBUL MALITHYA &copy; 2026 • Visual Storyteller
+        RAKIBUL MALITHYA &copy; 2026 • CREATIVE VIDEO EDITOR
     </footer>
 
     <script>
+        // Updated Video IDs (Corrected index 3 for the short link provided)
         const videoIds = [
             '6d9bzUnskKI', 'Vcbch2dCl98', 'Q2y8drU8t38', 
             'S455i-V3qSc', 'LRA89U2Lppc', 'TuR3FKJiwSY', 
@@ -267,29 +306,56 @@
             '1XNmjKr-dBs', 'QDKMYwzmc6c', 'og7ePoQ33QI'
         ];
 
+        function openModal(id) {
+            const modal = document.getElementById('video-modal');
+            const iframe = document.getElementById('modal-iframe');
+            iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('video-modal');
+            const iframe = document.getElementById('modal-iframe');
+            iframe.src = "";
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
         const grid = document.getElementById('video-grid');
         videoIds.forEach((id, index) => {
             const card = document.createElement('div');
-            card.className = 'glass-card overflow-hidden group hover:scale-[1.03] transition-all duration-500';
+            card.className = 'glass-card overflow-hidden group hover:scale-[1.03] transition-all duration-500 relative';
+            
             card.innerHTML = `
+                <div class="unmute-btn" onclick="event.stopPropagation(); unmuteVideo(this, '${id}')" title="Unmute Sound">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                </div>
+                <div class="video-overlay" onclick="openModal('${id}')"></div>
                 <div class="aspect-[4/5] w-full">
                     <iframe 
+                        id="iframe-${id}"
                         width="100%" 
                         height="100%" 
-                        src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&modestbranding=1&controls=0&showinfo=0" 
-                        title="Work ${index + 1}" 
+                        src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&modestbranding=1&controls=0" 
                         frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allow="autoplay; encrypted-media" 
                         allowfullscreen>
                     </iframe>
                 </div>
                 <div class="p-5 flex justify-between items-center bg-black/40">
-                    <span class="text-[10px] font-bold uppercase tracking-widest opacity-60">Production ${index + 1}</span>
-                    <span class="accent-green text-[10px] font-bold uppercase tracking-widest underline cursor-pointer">View Details</span>
+                    <span class="text-[10px] font-bold uppercase tracking-widest opacity-60">Creative Work ${index + 1}</span>
+                    <span class="accent-green text-[10px] font-bold uppercase tracking-widest underline cursor-pointer">Popup Full</span>
                 </div>
             `;
             grid.appendChild(card);
         });
+
+        function unmuteVideo(btn, id) {
+            const iframe = document.getElementById(`iframe-${id}`);
+            iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=0&loop=1&playlist=${id}&modestbranding=1&controls=1`;
+            btn.style.display = 'none';
+        }
     </script>
 </body>
 </html>
